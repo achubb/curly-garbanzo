@@ -30,6 +30,7 @@ export default {
             revealedMore: false,
             fullHeight: 0,
             singleHeight: 0,
+            isMobile: false,
         }
     },
 
@@ -41,15 +42,21 @@ export default {
 
     created() {
         this.secondaryLinks = this.$children;
+        Event.$on('resize', title => {
+            // reset switch
+            this.isMobileSize();
+            if (!this.isMobile) {
+                this.getMenuWidth(title);
+            }
+        });
     },
 
     mounted() {
-        window.addEventListener('resize', this.resizeWindow);
+        this.isMobileSize()
     },
 
     methods: {
         switchNav(title) {
-            // this.active = !this.active
             Event.$emit('primary-link-clicked', title);
             this.getMenuWidth(title);
         },
@@ -100,13 +107,11 @@ export default {
             }.bind(vm));
         },
 
-        resizeWindow() {
-            this.getMenuWidth();
-        },
-
         getMenuWidth() {
             let vm = this
+
             this.$nextTick( function() {
+                console.log(this.isMobile);
 
                 let el = vm.$el;
 
@@ -115,6 +120,12 @@ export default {
                         menuWidth = this.calculateMenuWidth(el);
 
                     vm.revealMore = vm.isRevealMoreNeeded(barWidth, menuWidth);
+
+                    // Toggle the revealMore so that overflow is hidden on open
+                    if (vm.revealMore) {
+                        vm.revealedMore = true;
+                        vm.manageSubnavHeight();
+                    }
                 }
 
                 if (vm.active && vm.revealMore) {
@@ -125,6 +136,15 @@ export default {
             }.bind(vm));
         },
 
+        isMobileSize: _.debounce(function() {
+            console.log('ims');
+            if (window.matchMedia("(max-width: 480px)").matches) {
+                console.log('u');
+                this.isMobile = true
+                console.log(this.isMobile)
+            }
+        }, 50),
+
         toggleRevealMore() {
             this.revealedMore = !this.revealedMore;
             this.manageSubnavHeight();
@@ -132,6 +152,3 @@ export default {
     },
 }
 </script>
-
-<style lang="css">
-</style>

@@ -22,6 +22,10 @@ export default {
         });
     },
 
+    mounted() {
+        window.addEventListener('resize', this.resizeWindow);
+    },
+
     methods: {
         updateActive(title) {
             this.primaryLinks.forEach((primaryLink) => {
@@ -31,7 +35,18 @@ export default {
                     primaryLink.active = false;
                 }
             });
-        }
+        },
+
+        resizeWindow: _.debounce(function() {
+            this.primaryLinks.forEach((primaryLink) => {
+                if (primaryLink.active) {
+                    let title = primaryLink.title;
+                    // Switch open nav off
+                    this.updateActive(title);
+                    Event.$emit('resize', title);
+                }
+            });
+        }, 50),
     }
 }
 </script>
