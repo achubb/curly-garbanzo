@@ -6,7 +6,25 @@
         >
             {{ title }}
         </a>
+        <a href="#" class="mobile--more"
+            v-if="isMobile"
+            v-on:click.prevent="switchNav(title)"
+        >
+            >
+        </a>
         <ul v-if="active">
+            <li v-if="isMobile">
+                <a href="#"
+                    v-on:click.prevent="returnToMain"
+                >
+                    GO BACK
+                </a>
+            </li>
+            <li v-if="isMobile">
+                <a href="#">
+                    {{ title }}
+                </a>
+            </li>
             <slot></slot>
             <li class="link--more" v-if="revealMore">
                 <a href="#"
@@ -41,18 +59,16 @@ export default {
     },
 
     created() {
-        this.secondaryLinks = this.$children;
-        Event.$on('resize', title => {
-            // reset switch
-            this.isMobileSize();
-            if (!this.isMobile) {
-                this.getMenuWidth(title);
-            }
-        });
-    },
+        this.secondaryLinks = this.$children
+        this.isMobile = this.isMobileSize()
 
-    mounted() {
-        this.isMobileSize()
+        Event.$on('resize', title => {
+            this.getMenuWidth(title)
+        });
+
+        Event.$on('browser-resize', () => {
+            this.isMobile = this.isMobileSize()
+        });
     },
 
     methods: {
@@ -110,44 +126,50 @@ export default {
         getMenuWidth() {
             let vm = this
 
-            this.$nextTick( function() {
-                console.log(this.isMobile);
+            if (!this.isMobileSize()) {
+                this.$nextTick( function() {
+                    let el = vm.$el;
 
-                let el = vm.$el;
+                    if (this.active) {
+                        let barWidth = this.calculateBarWidth(el),
+                            menuWidth = this.calculateMenuWidth(el);
 
-                if (this.active) {
-                    let barWidth = this.calculateBarWidth(el),
-                        menuWidth = this.calculateMenuWidth(el);
+                        vm.revealMore = vm.isRevealMoreNeeded(barWidth, menuWidth);
 
-                    vm.revealMore = vm.isRevealMoreNeeded(barWidth, menuWidth);
-
-                    // Toggle the revealMore so that overflow is hidden on open
-                    if (vm.revealMore) {
-                        vm.revealedMore = true;
-                        vm.manageSubnavHeight();
+                        // Toggle the revealMore so that overflow is hidden on open
+                        if (vm.revealMore) {
+                            vm.revealedMore = true;
+                            vm.manageSubnavHeight();
+                        }
                     }
-                }
 
-                if (vm.active && vm.revealMore) {
-                    vm.fullHeight = vm.calculateSubnavHeight(el)
-                    vm.singleHeight = vm.hideOverflow(el);
-                }
+                    if (vm.active && vm.revealMore) {
+                        vm.fullHeight = vm.calculateSubnavHeight(el)
+                        vm.singleHeight = vm.hideOverflow(el);
+                    }
 
-            }.bind(vm));
+                }.bind(vm));
+            }
         },
 
         isMobileSize: _.debounce(function() {
-            console.log('ims');
-            if (window.matchMedia("(max-width: 480px)").matches) {
-                console.log('u');
-                this.isMobile = true
-                console.log(this.isMobile)
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                return true
+            } else {
+                return false
             }
         }, 50),
 
         toggleRevealMore() {
             this.revealedMore = !this.revealedMore;
             this.manageSubnavHeight();
+        },
+
+        returnToMain() {
+            Event.$emit('return-to-main-clicked');
+            _.delay(() => {
+                this.active = false;
+            }, 1000);
         }
     },
 }

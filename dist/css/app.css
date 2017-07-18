@@ -1,3 +1,10 @@
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
 body {
   font-family: "Source Sans Pro", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -15,6 +22,20 @@ h3 {
 
 p {
   font-weight: 300;
+}
+
+.inner {
+  width: 100%;
+  max-width: 100rem;
+  padding-left: 8rem;
+  padding-right: 8rem;
+  margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .search-bar {
@@ -72,18 +93,13 @@ input[type=submit] {
           flex: 1 0 90px;
 }
 
-header {
-  position: relative;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+.nav-wrap {
+  text-align: right;
+  margin-left: auto;
 }
 
-header .nav-wrap {
-  text-align: right;
+header {
+  position: relative;
 }
 
 header ul {
@@ -98,10 +114,10 @@ header ul > li {
   display: inline-block;
 }
 
-header ul > li.link--more {
+header ul > li .link--more {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 8rem;
   background-color: cornflowerblue;
 }
 
@@ -116,11 +132,11 @@ header ul > li a {
 }
 
 header ul > li a:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.3);
 }
 
 header ul > li a.link--active {
-  background-color: rgba(0, 0, 0, 0.1);
+  text-decoration: underline;
 }
 
 header ul > li > ul {
@@ -130,6 +146,7 @@ header ul > li > ul {
   left: 0;
   right: 0;
   top: 100%;
+  padding: 0 8rem 0 7rem;
   overflow-y: hidden;
   text-align: left;
 }
@@ -149,38 +166,88 @@ header ul > li > ul a {
   font-size: 0.9rem;
 }
 
-header .service-menu {
+header .quicklinks {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+
+header .quicklinks > * {
   background-color: rgba(0, 0, 0, 0.1);
-  margin-bottom: 1rem;
-  display: inline-block;
-  padding: 0 1rem 0 0;
 }
 
-header .service-menu li a {
-  font-size: 0.8rem;
-  display: inline-block;
-  padding: 1rem;
+@media (max-width: 1279px) and (min-width: 767px) {
+  .inner {
+    padding: 0 2rem;
+  }
+
+  header ul > li .link--more {
+    right: 2rem;
+  }
+
+  header ul > li > ul {
+    padding: 0 2rem 0 1rem;
+  }
 }
 
-@media only screen and (max-width: 480px) {
-  header {
-    border: 1px solid red;
+@media only screen and (max-width: 768px) {
+  .inner {
+    padding: 0;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
   }
 
-  header .logo {
-    text-align: center;
-    border: 1px solid blue;
+  .nav-wrap {
+    margin: 0;
+    width: 100%;
   }
 
-  header .service-menu {
-    border: 1px solid hotpink;
+  .nav-wrap nav {
+    width: 200vw;
+    position: relative;
+    -webkit-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;
+  }
+
+  .nav-wrap nav ul {
+    width: 100vw;
+  }
+
+  .nav-wrap nav.menu--active {
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+  }
+
+  .nav-left {
     width: 100%;
-    text-align: center;
-    margin: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+  }
+
+  .quicklinks {
+    width: 100%;
+  }
+
+  .quicklinks .service-menu {
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: distribute;
+        justify-content: space-around;
+  }
+
+  .quicklinks .service-menu a {
+    padding: 1rem 0;
   }
 
   header .tools {
@@ -191,10 +258,41 @@ header .service-menu li a {
     display: block;
     width: 100%;
     text-align: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: end;
+        -ms-flex-pack: end;
+            justify-content: flex-end;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+
+  header ul > li a {
+    margin: 0 auto;
+    padding-left: 4rem;
+  }
+
+  header ul > li a.mobile--more {
+    border: 3px solid black;
+    margin: 0;
+    padding: 0 0.5rem;
+    display: inline-block;
+    width: 2rem;
+    height: auto;
+    -webkit-transform: translateX(-1rem);
+            transform: translateX(-1rem);
   }
 
   header ul > li > ul {
-    position: relative;
+    padding: 0;
+    top: 0;
+    left: 50%;
+  }
+
+  header ul > li > ul:before {
+    display: none;
   }
 }
 

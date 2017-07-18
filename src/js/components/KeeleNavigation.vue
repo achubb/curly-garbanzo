@@ -1,5 +1,7 @@
 <template lang="html">
-    <nav>
+    <nav
+        v-bind:class="{ 'menu--active' : menuActive }"
+    >
         <ul>
             <slot></slot>
         </ul>
@@ -10,7 +12,7 @@
 export default {
     data() {
         return {
-            message: 'Hello nav',
+            menuActive: false,
             primaryLinks: []
         }
     },
@@ -18,7 +20,13 @@ export default {
     created() {
         this.primaryLinks = this.$children;
         Event.$on('primary-link-clicked', title => {
-            this.updateActive(title);
+            this.updateActive(title)
+            this.menuActive = !this.menuActive
+        });
+
+        Event.$on('return-to-main-clicked', () => {
+            this.menuActive = !this.menuActive
+            this.closeAll();
         });
     },
 
@@ -37,6 +45,14 @@ export default {
             });
         },
 
+        closeAll() {
+            this.primaryLinks.forEach((primaryLink) => {
+                if (!primaryLink.active) {
+                    primaryLink.active = false;
+                }
+            });
+        },
+
         resizeWindow: _.debounce(function() {
             this.primaryLinks.forEach((primaryLink) => {
                 if (primaryLink.active) {
@@ -46,6 +62,7 @@ export default {
                     Event.$emit('resize', title);
                 }
             });
+            Event.$emit('browser-resize');
         }, 50),
     }
 }

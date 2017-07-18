@@ -1,5 +1,6 @@
 <template lang="html">
     <a href="#"
+        v-bind:class="{ 'tools-mobile': hiddenOnMobile }"
         v-on:click.prevent="searchCall()"
     >
         {{ keyText }}
@@ -10,19 +11,29 @@
 export default {
     data() {
         return {
-            searchOpened: false
+            searchOpened: false,
+            hiddenOnMobile: false
         }
     },
 
     props: {
         searchOpenText: { default: 'Search' },
-        searchCloseText: { default: 'Close' }
+        searchCloseText: { default: 'Close' },
+        hideOnMobile: { default: false }
+    },
+
+    created() {
+        this.isHiddenOnMobile()
     },
 
     methods: {
         searchCall() {
             Event.$emit('search-called');
             this.searchOpened =! this.searchOpened
+        },
+
+        isHiddenOnMobile() {
+            this.hiddenOnMobile = this.hideOnMobile
         }
     },
 
